@@ -22,119 +22,101 @@
     ></script>
   </head>
   <body>
-    <h1>Hello, world!</h1>
+    <div class="container">
+      <h1>Bible App</h1>
+      <form onsubmit="submitBibleForm(event)" id="bible-form">
+        <!-- Bible Version Dropdown -->
+        <label for="version-select" class="form-label"> Bible Version</label>
+        <select
+          onchange="onVersionChange()"
+          id="version-select"
+          class="form-select"
+        ></select>
 
-    <!-- Bible Version Dropdown -->
-    <select
-      id="bible-version-select"
-      class="form-select"
-      aria-label="Default select example"
-    ></select>
+        <!-- Select book -->
+        <label for="book-select" class="form-label">Select Book</label>
+        <select
+          onchange="onBookChange()"
+          id="book-select"
+          class="form-select"
+        ></select>
 
-    <!-- Search words or phrase -->
-    <div class="input-group">
-      <div class="form-outline">
-        <input placeholder="Search" type="search" id="form1" class="form-control" />
+        <!-- Chapter Select -->
+        <label for="chapter-select" class="form-label">Select Chapter</label>
+        <select id="chapter-select" class="form-select"></select>
+        <button type="submit" class="btn btn-primary">Read Chapter</button>
+      </form>
+      <div id="votd">
+        <h1>Verse of the Day</h1>
+        <div></div>
       </div>
-      <button type="button" class="btn btn-primary"></button>
     </div>
-
-    <!-- Select book -->
-
-    <select id="book-select" class="form-select" aria-label="Default select example"></select>
-
-    <!-- Chapter Select -->
-
-    <select id="chapter-select" class="form-select" aria-label="Default select example">
-      <option selected>Open this select menu</option>
-      <option value="1">One</option>
-      <option value="2">Two</option>
-      <option value="3">Three</option>
-    </select>
   </body>
 
   <script>
-    let versionsList = []
-    let booksList=[]
-
-    async function getVersionsList() {
-      const response = await fetch("https://api.scripture.api.bible/v1/bibles?language=eng", {
-        method: "GET",
-        headers: {
-          accept: "application/json",
-          "api-key": "fac23defb4f49d2756c6c13b3be90de8",
-        },
-      });
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      const data = await response.json();
-      //console.log(data.data);
-      const versions = data.data.map((version) => ({
-        id: version.id,
-        name: version.name,
-      }));
-      //console.log(versions);
-      return versions;
-    }
-
-    async function getBooksList(version) {
-      const response = await fetch(
-        `https://api.scripture.api.bible/v1/bibles/${version}/books?include-chapters=true`,
-        {
-          method: "GET",
-          headers: {
-            accept: "application/json",
-            "api-key": "fac23defb4f49d2756c6c13b3be90de8",
-          },
-        }
-      );
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      const data = await response.json();
-      const books = data.data.map((book) => ({
-        id: book.id,
-        name: book.name,
-        chapters: book.chapters,
-      }));
-      console.log(books);
-      return books;
-    }
-
-    async function init(){
-        versionsList = await getVersionsList()
-        booksList = await getBooksList()
-    }
-    //POPULATING THE VERSION SELECT
-    const versionSelect = document.getElementById("bible-version-select");
+    const API_KEY = "fac23defb4f49d2756c6c13b3be90de8";
+    const versionSelect = document.getElementById("version-select");
     const bookSelect = document.getElementById("book-select");
     const chapterSelect = document.getElementById("chapter-select");
-    getVersionsList().then((versions) => {
-      //console.log(versions);
-      const defaultVersion = versions[0].id;
+    const bibleForm = document.getElementById("bible-form");
 
-      versions.forEach((version, index) => {
-        const selected = index == 0 ? "selected" : "";
-        const option = `<option value="${version.id}" ${selected}>${version.name}</option>`;
-        versionSelect.innerHTML += option;
-      });
-      console.log(defaultVersion);
-      getBooksList(defaultVersion).then((books) => {
-        books.forEach((book) => {
-          const option = `<option value="${book.id}">${book.name}</option>`;
-          bookSelect.innerHTML += option;
+    fetch("https://api.scripture.api.bible/v1/bibles?language=eng", {
+      headers: { "api-key": API_KEY },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        data.data.forEach((version) => {
+          const optionHTML = `<option value="${version.id}">${version.name}</option>`;
+          versionSelect.innerHTML += optionHTML;
         });
-      });
-    });
+        onVersionChange();
+      })
+      .catch((error) => alert("ERROR FETCHING VERSION", error));
 
-    function updateChapters(bookID) {
-        let chapters=[]
-        for(const book in books)
+    function onVersionChange() {
+      const versionID = versionSelect.value;
+      fetch(`https://api.scripture.api.bible/v1/bibles/${versionID}/books`, {
+        headers: { "api-key": API_KEY },
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          //console.log(data);
+          bookSelect.innerHTML = "";
+          chapterSelect.innerHTML = "";
+          data.data.forEach((book) => {
+            const optionHTML = `<option value="${book.id}">${book.name}</option>`;
+            bookSelect.innerHTML += optionHTML;
+          });
+          onBookChange();
+        });
+    }
+    function onBookChange() {
+      const versionID = versionSelect.value;
+      const bookID = bookSelect.value;
+      fetch(
+        `https://api.scripture.api.bible/v1/bibles/${versionID}/books/${bookID}/chapters`,
+        {
+          headers: { "api-key": API_KEY },
+        }
+      )
+        .then((response) => response.json())
+        .then((data) => {
+          console.log(data);
+          chapterSelect.innerHTML = "";
+          data.data.forEach((chapter) => {
+            const optionHTML = `<option value="${chapter.id}">${chapter.number}</option>`;
+            chapterSelect.innerHTML += optionHTML;
+          });
+        });
+    }
+
+    function submitBibleForm(event) {
+      event.preventDefault();
+      const bibleID = versionSelect.value;
+      const chapterID = chapterSelect.value;
+      localStorage.setItem("bible-id", bibleID);
+      localStorage.setItem("chapter-id", chapterID);
+      window.location.href = "chapter.html";
     }
   </script>
 </html>
