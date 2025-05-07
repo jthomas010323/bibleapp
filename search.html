@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Bible App - Chapter Content</title>
+    <link rel="stylesheet" href="style.css" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-SgOJa3DmI69IUzQ2PVdRZhwQ+dy64/BUtbMJw1MZ8t5HZApcHrRKUc4W0kG879m7"
+      crossorigin="anonymous"
+    />
+    <script
+      src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
+      integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.min.js"
+      integrity="sha384-VQqxDN0EQCkWoxt/0vsQvZswzTHUVOImccYmSyhJTp7kGtPed0Qcx8rK9h9YEgx+"
+      crossorigin="anonymous"
+    ></script>
+  </head>
+  <body>
+    <nav class="navbar navbar-light bg-info px-2">
+      <a href="index.html" class="h-25 row text-decoration-none text-black">
+        <img
+          style="width: 75px; height: 50px"
+          class="img-fluid"
+          src="assets/cross logo.jpg"
+        />
+        <h1 class="col">Bible App</h1>
+      </a>
+    </nav>
+    <div class="container py=4 text-center">
+      <h1 id="search-title"></h1>
+      <div id="search-results"></div>
+      <a href="index.html" class="btn btn-primary mb-3">Return</a>
+    </div>
+  </body>
+  <script>
+    const API_KEY = "fac23defb4f49d2756c6c13b3be90de8";
+    const versionID = localStorage.getItem("version-id");
+    const searchQuery = localStorage.getItem("search-query");
+    console.log(searchQuery);
+    const searchResults = document.getElementById("search-results");
+    if (versionID && searchQuery != "") {
+      fetch(
+        `https://api.scripture.api.bible/v1/bibles/${versionID}/search?query=${searchQuery}&sort=relevance&fuzziness=0`,
+        {
+          headers: { "api-key": API_KEY },
+        }
+      )
+        .then((response) => response.json())
+        .then((data) => {
+          //console.log(data);
+          console.log(data);
+          document.getElementById(
+            "search-title"
+          ).innerText = `The results that contain ${data.data.query}:`;
+          if (data.data.total > 0) {
+            data.data.verses.forEach((verse) => {
+              const verseHTML = `<blockquote class="blockquote mt-5 mx-auto text-center">
+      <p class="mb-0">${verse.text}</p>
+      <footer class="blockquote-footer mt-0">${verse.reference}</footer>
+    </blockquote>`;
+              searchResults.innerHTML += verseHTML;
+            });
+          } else {
+            const verseHTML = `<h1 class="alert alert-danger">Looks like thats not in this bible!</h1>`;
+            searchResults.innerHTML += verseHTML;
+          }
+        });
+    } else {
+      const verseHTML = `<h1 class="alert alert-warning">Please enter a valid query</h1>`;
+      searchResults.innerHTML += verseHTML;
+    }
+  </script>
+</html>

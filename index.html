@@ -4,6 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Bible App</title>
+    <link rel="stylesheet" href="style.css" />
     <link
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css"
       rel="stylesheet"
@@ -20,36 +21,100 @@
       integrity="sha384-VQqxDN0EQCkWoxt/0vsQvZswzTHUVOImccYmSyhJTp7kGtPed0Qcx8rK9h9YEgx+"
       crossorigin="anonymous"
     ></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
   </head>
   <body>
-    <div class="container">
-      <h1>Bible App</h1>
-      <form onsubmit="submitBibleForm(event)" id="bible-form">
-        <!-- Bible Version Dropdown -->
-        <label for="version-select" class="form-label"> Bible Version</label>
+    <nav class="navbar navbar-light bg-info px-2">
+      <a href="index.html" class="h-25 row text-decoration-none text-black">
+        <img
+          style="width: 75px; height: 50px"
+          class="img-fluid"
+          src="assets/cross logo.jpg"
+        />
+        <h1 class="col my-auto">Bible App</h1>
+      </a>
+      <div class="w-25">
+        <label for="version-select" class="form-label my-auto"
+          >Bible Version</label
+        >
         <select
           onchange="onVersionChange()"
           id="version-select"
           class="form-select"
         ></select>
-
-        <!-- Select book -->
-        <label for="book-select" class="form-label">Select Book</label>
-        <select
-          onchange="onBookChange()"
-          id="book-select"
-          class="form-select"
-        ></select>
-
-        <!-- Chapter Select -->
-        <label for="chapter-select" class="form-label">Select Chapter</label>
-        <select id="chapter-select" class="form-select"></select>
-        <button type="submit" class="btn btn-primary">Read Chapter</button>
-      </form>
-      <div id="votd">
-        <h1>Verse of the Day</h1>
-        <div></div>
       </div>
+    </nav>
+
+    <div class="jumbotron mx-auto px-2">
+      <h1 class="display-4">Read The Bible</h1>
+      <p class="lead">
+        Available in multiple translations and also allows you to find verses
+        with a specific word
+      </p>
+      <hr class="my-4" />
+      <div class="row gap-2">
+        <form
+          class="col w-100 border rounded p-2"
+          onsubmit="submitBibleForm(event)"
+          id="bible-form"
+        >
+          <!-- Bible Version Dropdown -->
+
+          <!-- Select book -->
+          <label for="book-select" class="form-label">Select Book</label>
+          <select
+            onchange="onBookChange()"
+            id="book-select"
+            class="form-select"
+          ></select>
+
+          <!-- Chapter Select -->
+          <label for="chapter-select" class="form-label">Select Chapter</label>
+          <select id="chapter-select" class="form-select"></select>
+          <button type="submit" class="btn btn-primary my-2">
+            Read Chapter
+          </button>
+        </form>
+        <form
+          class="col w-100 border rounded p-2"
+          onsubmit="findWord(event)"
+          id="search-form"
+        >
+          <label for="search-input">Find a word used in the Bible</label>
+          <input
+            class="form-control"
+            id="search-input"
+            placeholder="Search"
+            required
+          />
+          <button class="btn btn-primary my-2 align-middle" type="submit">
+            Search in The Bible
+          </button>
+        </form>
+      </div>
+    </div>
+    <div class="px-2">
+      <blockquote class="blockquote mt-5 mx-auto text-center">
+        <p class="mb-0 fw-bold">
+          I can do all things through Christ who strengthens me
+        </p>
+        <footer class="blockquote-footer mt-0">Philippians 4:13</footer>
+      </blockquote>
+      <blockquote class="blockquote mt-5 mx-auto text-center">
+        <p class="mb-0 fw-bold">
+          For God so loved the world, that He gave His only begotten Son, that
+          whoever believes in Him should not perish but have everlasting life
+        </p>
+        <footer class="blockquote-footer mt-0">John 3:16</footer>
+      </blockquote>
+      <blockquote class="blockquote mt-5 mx-auto text-center">
+        <p class="mb-0 fw-bold">
+          Do not fear, for I am with you; do not be afraid, for I am your God. I
+          will strengthen you; I will help you; I will hold on to you with my
+          righteous right hand.
+        </p>
+        <footer class="blockquote-footer mt-0">Isaiah 41:10</footer>
+      </blockquote>
     </div>
   </body>
 
@@ -104,17 +169,28 @@
           console.log(data);
           chapterSelect.innerHTML = "";
           data.data.forEach((chapter) => {
-            const optionHTML = `<option value="${chapter.id}">${chapter.number}</option>`;
+            const optionHTML = `<option value="${chapter.id}">${
+              chapter.number == "intro" ? "Introduction" : chapter.number
+            }</option>`;
             chapterSelect.innerHTML += optionHTML;
           });
         });
     }
 
+    function findWord(event) {
+      event.preventDefault();
+      const versionID = versionSelect.value;
+      const searchQuery = document.getElementById("search-input").value;
+      localStorage.setItem("search-query", searchQuery);
+      localStorage.setItem("version-id", versionID);
+      window.location.href = "search.html";
+    }
+
     function submitBibleForm(event) {
       event.preventDefault();
-      const bibleID = versionSelect.value;
+      const versionID = versionSelect.value;
       const chapterID = chapterSelect.value;
-      localStorage.setItem("bible-id", bibleID);
+      localStorage.setItem("version-id", versionID);
       localStorage.setItem("chapter-id", chapterID);
       window.location.href = "chapter.html";
     }

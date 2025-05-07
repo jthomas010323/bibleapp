@@ -1,0 +1,21 @@
+* {
+  font-family: Georgia, serif;
+}
+
+.v {
+  font-weight: bold;
+  vertical-align: super;
+  font-size: 0.8em;
+  margin-right: 2px;
+}
+@media (min-width: 768px) {
+  .jumbotron {
+    width: 75%;
+  }
+}
+
+@media (min-width: 992px) {
+  .jumbotron {
+    width: 50%;
+  }
+}

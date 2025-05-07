@@ -4,6 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Bible App - Chapter Content</title>
+    <link rel="stylesheet" href="style.css" />
     <link
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css"
       rel="stylesheet"
@@ -22,16 +23,36 @@
     ></script>
   </head>
   <body>
-    <div class="container">
+    <nav class="navbar navbar-light bg-info px-2">
+      <a href="index.html" class="h-25 row text-decoration-none text-black">
+        <img
+          style="width: 75px; height: 50px"
+          class="img-fluid"
+          src="assets/cross logo.jpg"
+        />
+        <h1 class="col">Bible App</h1>
+      </a>
+    </nav>
+    <div class="container py-4">
       <h1 id="chapter-title"></h1>
       <div id="chapter-div"></div>
-      <button onclick="prevChapter()" id="prev-btn" class="btn btn-danger">
-        Prev
-      </button>
-      <a href="index.html" class="btn btn-primary">Return</a>
-      <button onclick="nextChapter()" id="next-btn" class="btn btn-danger">
-        Next
-      </button>
+      <div class="d-flex justify-content-center">
+        <button
+          onclick="prevChapter()"
+          id="prev-btn"
+          class="btn btn-primary mx-2"
+        >
+          Prev
+        </button>
+        <a href="index.html" class="btn btn-secondary mx-2">Return</a>
+        <button
+          onclick="nextChapter()"
+          id="next-btn"
+          class="btn btn-primary mx-2"
+        >
+          Next
+        </button>
+      </div>
     </div>
   </body>
   <script>
@@ -40,7 +61,7 @@
     const API_KEY = "fac23defb4f49d2756c6c13b3be90de8";
     const chapterDiv = document.getElementById("chapter-div");
     const chapterTitle = document.getElementById("chapter-title");
-    const bibleID = localStorage.getItem("bible-id");
+    const bibleID = localStorage.getItem("version-id");
     const chapterID = localStorage.getItem("chapter-id");
     console.log(bibleID, chapterID);
     if (bibleID && chapterID) {
@@ -60,11 +81,11 @@
         })
         .catch((error) => {
           chapterDiv.innerHTML =
-            '<div class="alert alert-danger">Error loading chapter!</div>';
+            '<h1 class="alert alert-danger">Error loading chapter!</h1>';
         });
     } else {
       chapterDiv.innerHTML =
-        '<div class="alert alert-warning">Book or Chapter Doesnt Exist!</div>';
+        '<h1 class="alert alert-warning">Book or Chapter Doesnt Exist!</h1>';
     }
 
     function prevChapter() {
