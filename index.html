@@ -25,6 +25,7 @@
   </head>
   <body>
     <nav class="navbar navbar-light bg-info px-2">
+      <!-- LOGO  -->
       <a href="index.html" class="h-25 row text-decoration-none text-black">
         <img
           style="width: 75px; height: 50px"
@@ -34,6 +35,7 @@
         <h1 class="col my-auto">Bible App</h1>
       </a>
       <div class="w-25">
+        <!-- Bible Version Dropdown -->
         <label for="version-select" class="form-label my-auto"
           >Bible Version</label
         >
@@ -44,7 +46,7 @@
         ></select>
       </div>
     </nav>
-
+    <!-- JUMBO WITH FUNCTIONALTY -->
     <div class="jumbotron mx-auto px-2">
       <h1 class="display-4">Read The Bible</h1>
       <p class="lead">
@@ -53,13 +55,12 @@
       </p>
       <hr class="my-4" />
       <div class="row gap-2">
+        <!-- READ BIBLE FORM -->
         <form
           class="col w-100 border rounded p-2"
           onsubmit="submitBibleForm(event)"
           id="bible-form"
         >
-          <!-- Bible Version Dropdown -->
-
           <!-- Select book -->
           <label for="book-select" class="form-label">Select Book</label>
           <select
@@ -75,12 +76,15 @@
             Read Chapter
           </button>
         </form>
+
+        <!-- FIND WORD FORM -->
         <form
           class="col w-100 border rounded p-2"
           onsubmit="findWord(event)"
           id="search-form"
         >
           <label for="search-input">Find a word used in the Bible</label>
+          <!-- search word -->
           <input
             class="form-control"
             id="search-input"
@@ -93,6 +97,7 @@
         </form>
       </div>
     </div>
+    <!-- QUOTE DIV, POPULAR QUOTES -->
     <div class="px-2">
       <blockquote class="blockquote mt-5 mx-auto text-center">
         <p class="mb-0 fw-bold">
@@ -125,6 +130,7 @@
     const chapterSelect = document.getElementById("chapter-select");
     const bibleForm = document.getElementById("bible-form");
 
+    //INITALIZE VERSIONS
     fetch("https://api.scripture.api.bible/v1/bibles?language=eng", {
       headers: { "api-key": API_KEY },
     })
@@ -138,6 +144,7 @@
       })
       .catch((error) => alert("ERROR FETCHING VERSION", error));
 
+    //UPDATE BOOKS ON VERSION CHANGE
     function onVersionChange() {
       const versionID = versionSelect.value;
       fetch(`https://api.scripture.api.bible/v1/bibles/${versionID}/books`, {
@@ -155,6 +162,8 @@
           onBookChange();
         });
     }
+
+    //UPDATE CHAPTERS ON BOOK CHANGE
     function onBookChange() {
       const versionID = versionSelect.value;
       const bookID = bookSelect.value;
