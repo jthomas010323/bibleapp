@@ -4,7 +4,7 @@ This application is used to read and search the bible. Contains a variety of tra
 
 ## How to access
 
-https://jthomas010323.github.io/
+https://jthomas010323.github.io/bibleapp/index.html
 
 ### Usage
 
