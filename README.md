@@ -20,6 +20,8 @@ To go back to the main page at any time, click the logo in the top right
 
 NEED AN API KEY TO ACCESS THIS API
 
+Documentation: https://scripture.api.bible/livedocs
+
 https://api.scripture.api.bible/v1/
 
 Used 5 endpoints:
